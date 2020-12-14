@@ -10,6 +10,15 @@
     line: "We reached droste level {{ ansible_facts['hostname'].split('-')[1] }}"
     create: yes
 
+- name: use cron to propagate the level up the stack
+  cron:
+    name: droste
+    cron_file: droste
+    user: vagrant
+    minute: *
+    hour: *
+    job: cp -f /home/vagrant/droste/droste-*-is-up /vagrant
+    
 - name: install EPEL
   yum:
     name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
