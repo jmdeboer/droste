@@ -30,6 +30,7 @@
 - name: clone project from github
   git:
     repo: https://github.com/jmdeboer/droste.git
+    version: centos-dev
     dest: /home/vagrant/droste
     force: yes
   become: no
