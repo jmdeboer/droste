@@ -1,0 +1,5 @@
+.git
+.project
+.vagrant
+*.retry
+droste-*-is-up
