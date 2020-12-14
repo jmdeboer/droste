@@ -7,16 +7,16 @@
 - name: write file so parent knows we are up
   lineinfile:
     path: /vagrant/droste-{{ ansible_facts['hostname'].split('-')[1] }}-is-up
-    line: "We reached droste level {{ ansible_facts['hostname'].split('-')[1] }}"
+    line: "We reached Droste level {{ ansible_facts['hostname'].split('-')[1] }}"
     create: yes
 
-- name: use cron to propagate the level up the stack
+- name: use cron to propagate the Droste level up the stack
   cron:
     name: droste
     cron_file: droste
     user: vagrant
-    minute: *
-    hour: *
+    minute: "*"
+    hour: "*"
     job: cp -f /home/vagrant/droste/droste-*-is-up /vagrant
     
 - name: install EPEL
@@ -47,7 +47,7 @@
 - name: update Vagrantfile
   vars:
     level: "{{ ansible_facts['hostname'].split('-')[1]|int + 1 }}"
-    memory: "{{ ansible_facts.memory_mb.real.free|int - 512 }}"
+    memory: "{{ ansible_facts.memory_mb.real.free|int - 768 }}"
   lineinfile: path=/home/vagrant/droste/Vagrantfile line={{ item.line }} regex={{ item.regex }}
   with_items:
     - { line: '  config.vm.define "droste-{{ level }}"', regex: '.*config\.vm\.define.*"' }
