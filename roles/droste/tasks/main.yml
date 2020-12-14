@@ -1,0 +1,45 @@
+---
+
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+    
+- name: write file so parent knows we are up
+  lineinfile:
+    path: /vagrant/droste-{{ ansible_facts['hostname'].split('-')[1] }}-is-up
+    line: "We reached droste level {{ ansible_facts['hostname'].split('-')[1] }}"
+    create: yes
+
+- name: install EPEL
+  yum:
+    name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+    state: present
+
+- name: install packages
+  yum:
+    name:
+      - git
+      - ansible
+      - https://releases.hashicorp.com/vagrant/2.2.13/vagrant_2.2.13_x86_64.rpm
+      - https://download.virtualbox.org/virtualbox/6.0.24/VirtualBox-6.0-6.0.24_139119_el7-1.x86_64.rpm
+    state: present
+    update_cache: yes
+    disable_gpg_check: yes
+    validate_certs: no
+
+- name: clone project from github
+  git:
+    repo: https://github.com/jmdeboer/droste.git
+    dest: /home/vagrant/droste
+    force: yes
+  become: no
+
+- name: update Vagrantfile
+  vars:
+    level: "{{ ansible_facts['hostname'].split('-')[1]|int + 1 }}"
+    memory: "{{ ansible_facts.memory_mb.real.free|int - 512 }}"
+  lineinfile: path=/home/vagrant/droste/Vagrantfile line={{ item.line }} regex={{ item.regex }}
+  with_items:
+    - { line: '  config.vm.define "droste-{{ level }}"', regex: '.*config\.vm\.define.*"' }
+    - { line: '    vb.name = "droste-{{ level }}"',      regex: '.*vb\.name.*' }
+    - { line: '    vb.memory = {{ memory }}',            regex: '.*vb\.memory.*' }
