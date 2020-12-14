@@ -36,7 +36,7 @@ You need Git (obviously, you're on github.com), Ansible, VirtualBox and Vagrant 
 
 Other versions and OSes might work, who knows, YMMV.
 
-The Vagrantfile has hardcoded settings for memory and number of CPUs. Memory is automatically adjusted, so you can change it to whatever you want. Changing the number of CPUs only has an effect on the top level, each new VM will use the setting from github. Maybe I'll find an elegant solution.
+The Vagrantfile has settings for initial memory allocations. Memory is automatically adjusted on deeper levels, so you can change it to whatever you want. Use of a single CPU is enforced, using multiple CPUs messes up the nested virtualization.
 
 ### Does this perform?
 
